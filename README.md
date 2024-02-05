@@ -4,7 +4,7 @@ A Merkle Proof is a way to prove that a piece of data is included in a large dat
 
 ## Merkle Tree
 
-A Merkle Tree is a binary tree where each leaf node represents a block of data (for instance, a transaction), and each non-leaf node is a [hash](https://en.wikipedia.org/wiki/Hash_function) of its child nodes.
+A Merkle Tree is a binary tree where each leaf node represents a block of data (for instance, a transaction) and each non-leaf node is a [hash](https://en.wikipedia.org/wiki/Hash_function) of its child nodes.
 
 ![Merkle Tree Diagram](/assets/merkle.png)
 
@@ -85,19 +85,19 @@ console.log(`Merkle Proof for ${emailToVerify}:`, proofForEmail1);
 
 In the code snippet above, we first import two packages to help us achieve the desired functionality.
 
-- keccak256 -- for hashing the email addresses.
-- MerkleTree -- to create and work with the Merkle Tree.
+- [keccak256](https://www.npmjs.com/package/keccak256) - For hashing the email addresses.
+- [MerkleTree](https://www.npmjs.com/package/merkletreejs) - To create and work with the Merkle Tree.
 
-As a first step in our implementation, we create the leaf nodes of the Merkle Tree by hashing the whitelisted email addresses using the [keccak256 JavaScript library](https://www.npmjs.com/package/keccak256).
+As a first step in our implementation, we create the leaf nodes of the Merkle Tree by hashing the whitelisted email addresses using the `keccak256` JavaScript library.
 
 Next, we create a new `MerkleTree` instance to construct the Merkle Tree. We provide it with the hashed email addresses, the `keccak256` hashing function and the `sortPairs` option which ensures consistency in the tree structure.
 
-The `getRoot()` method of the merkleTree object is used to retrieve the Merkle root hash, which represents the hash of all the whitelisted email addresses. Verifiers can use the root hash to verify that the hashed email addresses are indeed whitelisted in a separate function.
+The `getRoot()` method of the `merkleTree` object is used to retrieve the Merkle Root hash, which represents the hash of all the whitelisted email addresses. Verifiers can use the root hash to verify that the hashed email addresses are indeed whitelisted.
 
-Finally, we define a `generateMerkleProof()` function that takes an email address as input, hashes it using keccak256, and then uses the `getProof()` method of the `merkleTree` object to generate a Merkle proof for that email address. The proof is converted into an array of hexadecimal strings and returned.
+Finally, we define a `generateMerkleProof()` function that takes an email address as input, hashes it using `keccak256` and then uses the `getProof()` method of the `merkleTree` object to generate a Merkle Proof for that email address. The proof is converted into an array of hexadecimal strings and returned.
 
-The proof contains the minimum number of nodes required to reconstruct the path from the given email hash to the Merkle Root. As a test of our implementation, we define a `proofForEmail` variable to generate a Merkle Proof for one of the whitelisted emails by passing it into the `generateMerkleProof()` function and logging the resulting value to the console for visibility.
+The proof contains the minimum number of nodes required to reconstruct the path from the given email hash to the Merkle Root. To exemplify our implementation, we define a `proofForEmail` variable to generate a Merkle Proof for one of the whitelisted emails by passing it into the `generateMerkleProof()` function and logging the resulting value to the console for visibility.
 
 ### Conclusion
 
-This tutorial demonstrates the basic implementation and utility of Merkle Proofs. We covered The Merkle Tree in detail to lay the foundation for a better understanding of Merkle Proofs. We have also demonstrated how these concepts can be applied to whitelisted three email addresses in a JavaScript project.
+This tutorial demonstrates the basic implementation and utility of Merkle Proofs. We covered the Merkle Tree in detail to lay the foundation for a better understanding of Merkle Proofs. We also demonstrated how these concepts can be applied in practice to whitelist three email addresses in a JavaScript project.
