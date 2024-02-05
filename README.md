@@ -8,7 +8,7 @@ A Merkle Tree is a binary tree where each leaf node represents a block of data (
 
 ![Merkle Tree Diagram](/assets/merkle.png)
 
-In a Merkle tree, data is organized into groups and each group is hashed together to create a unique hash value. Then, these hash values are further grouped and hashed again until there is only one hash value left — the root hash. The root hash becomes the unique fingerprint that represents all the data in the Merkle tree.
+In a Merkle tree, data is organized into groups and each group is hashed together to create a unique hash value. Then, these hash values are further grouped and hashed again until there is only one hash value left — the root hash, which is the unique fingerprint that represents all the data in the Merkle Tree.
 
 To better exemplify this, consider the diagram below:
 
@@ -16,21 +16,19 @@ To better exemplify this, consider the diagram below:
 
 At the bottom of the diagram, you see `T1` to `T8`. They represent the leaf nodes of the Merkle tree, which contain the actual data, or in our case, transactions.
 
-Each leaf node is hashed using a cryptographic hash function we’ve denoted by `h(1)`, `h(2)`, etc. This process transforms the transaction data into a hash value, which is unique to the contents of the transaction.
+Each leaf node is hashed using a cryptographic hash function denoted by `h(1)`, `h(2)`, and so on. These hash functions transform the transaction data into a unique hash value that corresponds to the contents of the transaction.
 
-The hash values of the leaf nodes are then paired up and hashed together to form the hashes of the next layer of the tree, which are the branch nodes. For example, `h(T1)` is paired with `h(T2)` to create `h(1,2)`, and `h(T3)` is paired with `h(T4)` to create `h(3,4)`, and so on. This process is repeated until there is only one hash left — The Merkle Root.
+The hash values of the leaf nodes are paired and hashed together to generate the hash values for the next layer of the tree, which are the branch nodes. For example, `h(T1)` is paired with `h(T2)` to create `h(1,2)`, and `h(T3)` is paired with `h(T4)` to create `h(3,4)`, and so on. This process is repeated until there is only one hash left — The Merkle Root.
 
-The Merkle Root is at the top of the tree and represents the hash of all the underlying transactions. In the diagram, `h(1,2,3,4,5,6,7,8)` is the Merkle Root which is the single hash that summarizes the entire set of transactions in the tree.
-
-But how does this help us prove the existence of a transaction in the tree? This is where Merkle Proofs come in.
+The Merkle Root is at the top of the tree and represents the hash of all the underlying transactions. In the diagram, `h(1,2,3,4,5,6,7,8)` is the Merkle Root which is the single hash that summarizes the entire set of transactions in the tree. But how does this help us prove the existence of a transaction in the tree? This is where Merkle Proofs come in.
 
 ## Merkle Proof
 
-In the scenario we depicted with the diagram, a Merkle Proof would allow someone to prove that a particular transaction is included in a block without revealing the entire set of transactions. For example, to prove that `T2` is part of the Merkle Tree, you would only need to provide `h(T2)`, `h(T1)`, `h(3,4)`, and `h(5,6,7,8)` along with the Merkle Root.
+In the scenario we depicted with the diagram, a Merkle Proof allows you to prove that a particular transaction is included in a block without revealing all the transactions in the block. For example, to prove that `T2` is part of the Merkle Tree, you would only need to provide `h(T2)`, `h(T1)`, `h(3,4)`, and `h(5,6,7,8)` along with the Merkle Root.
 
-The verifier can then hash `h(T2)` and `h(T1)` to verify `h(1,2)`, then hash the resulting value with `h(3,4)` to verify `h(1,2,3,4)`, and finally hash `h(1,2,3,4)` with `h(5,6,7,8)` to verify that it matches the Merkle Root. If the computed root matches the known Merkle Root, the proof is valid.
+The verifier can hash `h(T2)` and `h(T1)` to verify `h(1,2)`, then hash the resulting value with `h(3,4)` to verify `h(1,2,3,4)`, and finally hash `h(1,2,3,4)` with `h(5,6,7,8)` to verify that it matches the Merkle Root. If the computed root matches the known Merkle Root, the proof is valid.
 
-The process is efficient and secure and enables fast and efficient verification of large datasets. The Merkle Tree guarantees that any change in a transaction will result in a different Merkle Root, which is a crucial aspect of ensuring the integrity of blocks in a blockchain. As a proof of concept, let’s walkthrough a scenario where we are required to whitelist three email addresses.
+The process is fast and secure and enables efficient verification of data in large datasets. The Merkle Tree guarantees that any change in the data will result in a different Merkle Root, which is a crucial aspect of ensuring the integrity of data in the entire tree. As a proof of concept, let’s walkthrough a scenario where we are required to whitelist three email addresses.
 
 ### Whitelisting Email Addresses
 
@@ -85,14 +83,21 @@ console.log(`Merkle Proof for ${emailToVerify}:`, proofForEmail1);
  */
 ```
 
-In the code snippet above, we start by hashing the whitelisted email addresses to create the leaf nodes of the Merkle Tree. We did this using the [keccak256 JavaScript library](https://www.npmjs.com/package/keccak256).
+In the code snippet above, we first import two packages to help us achieve the desired functionality.
 
-Next, we create a new `MerkleTree` instance to construct the Merkle Tree. We provide it with the hashed email addresses, the `keccak256` hashing function and the `sortPairs` option, which ensures consistency in the tree structure.
+- keccak256 -- for hashing the email addresses.
+- MerkleTree -- to create and work with the Merkle Tree.
 
-Finally, we define a `generateMerkleProof()` function that takes an email address, hashes it, and uses the `getProof()` function to generate the Merkle Proof for the provided email address.
+As a first step in our implementation, we create the leaf nodes of the Merkle Tree by hashing the whitelisted email addresses using the [keccak256 JavaScript library](https://www.npmjs.com/package/keccak256).
 
-The proof contains the minimum number of nodes required to reconstruct the path from the given email hash to the Merkle Root. We could also use the Merkle Root to verify that the hashed email addresses are indeed whitelisted in a separate function.
+Next, we create a new `MerkleTree` instance to construct the Merkle Tree. We provide it with the hashed email addresses, the `keccak256` hashing function and the `sortPairs` option which ensures consistency in the tree structure.
+
+The `getRoot()` method of the merkleTree object is used to retrieve the Merkle root hash, which represents the hash of all the whitelisted email addresses. Verifiers can use the root hash to verify that the hashed email addresses are indeed whitelisted in a separate function.
+
+Finally, we define a `generateMerkleProof()` function that takes an email address as input, hashes it using keccak256, and then uses the `getProof()` method of the `merkleTree` object to generate a Merkle proof for that email address. The proof is converted into an array of hexadecimal strings and returned.
+
+The proof contains the minimum number of nodes required to reconstruct the path from the given email hash to the Merkle Root. As a test of our implementation, we define a `proofForEmail` variable to generate a Merkle Proof for one of the whitelisted emails by passing it into the `generateMerkleProof()` function and logging the resulting value to the console for visibility.
 
 ### Conclusion
 
-This tutorial demonstrates the basic implementation and utility of Merkle Proofs. We also covered concepts like The Merkle Tree in detail to lay the foundation for a better understanding of Merkle Proofs.
+This tutorial demonstrates the basic implementation and utility of Merkle Proofs. We covered The Merkle Tree in detail to lay the foundation for a better understanding of Merkle Proofs. We have also demonstrated how these concepts can be applied to whitelisted three email addresses in a JavaScript project.
